@@ -1,5 +1,3 @@
-var count = 0;
-
 var getAllYears = function (firstRecord) {
     var keys = Object.keys(firstRecord);
     keys.splice(keys.length - 2, 2);
@@ -25,21 +23,64 @@ var getDataPerYear = function (records) {
 };
 
 var getExtentMortalityRatePerYear = function (dataPerYear) { //todo refactor the duplication
-    var minVal = Object.keys(dataPerYear).reduce(function (year1, year2) {
-        return year1 < year2 ? year1 : year2;
+    var yearWiseData = Object.keys(dataPerYear).map(function (record) {
+        return dataPerYear[record];
     });
 
-    var maxVal = Object.keys(dataPerYear).reduce(function (year1, year2) {
-        return year1 > year2 ? year1 : year2;
-    });
+    var minVal = Math.min.apply(null, yearWiseData);
+    var maxVal = Math.max.apply(null, yearWiseData);
 
-    return [minVal,maxVal];
+    return [minVal, maxVal];
 };
 
+const OUTER_WIDTH = 1000;
+const OUTER_HEIGHT = 750;
+const MARGIN = 20;
+const INNER_HEIGHT = OUTER_HEIGHT - (2 * MARGIN);
+const INNER_WIDTH = OUTER_HEIGHT - (2 * MARGIN);
+
 d3.csv('data/mortalityRatesData.csv', function (records) {
+    var svg = d3.select('.container').append('svg')
+        .attr('height', OUTER_HEIGHT)
+        .attr('width', OUTER_WIDTH);
+
     var dataPerYear = getDataPerYear(records);
     var yearScale = d3.extent(Object.keys(dataPerYear));
     var mortalityRateScale = getExtentMortalityRatePerYear(dataPerYear);
-    var xScale = d3.utcYears(yearScale);
-    var yScale = d3.scaleLinear(mortalityRateScale);
+
+    var xScale = d3.scaleLinear()
+        .domain(yearScale)
+        .range([0, INNER_WIDTH]);
+
+    var yScale = d3.scaleLinear()
+        .domain(mortalityRateScale)
+        .range([INNER_HEIGHT, 0]);
+
+    var g = svg.append('g')
+        .attr('transform','translate('+MARGIN +','+MARGIN+')');
+
+    var line = d3.line()
+        .x(function(q){return xScale(q)})
+        .y(function(q){return yScale(dataPerYear[q])});
+
+    g.append('path')
+        .classed('mortality-rate', true)
+        .attr('d', line(dataPerYear));
+
+
+    g.selectAll('circle')
+        .data(Object.keys(dataPerYear))
+        .enter().append('circle')
+        .attr('r', 5);
+
+    g.selectAll('circle')
+        .attr('cx', function (r) {
+            return xScale(r);
+        })
+        .attr('cy', function (r) {
+            return yScale(dataPerYear[r])
+        })
+        .attr('class', 'rateToken');
+
+    g.selectAll('circle').exit().remove();
 });
