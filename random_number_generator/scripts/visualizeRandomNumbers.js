@@ -66,15 +66,13 @@ var createChart = function () {
     return svg;
 };
 
-var randomLineGenerator = function (line, svg) {
-    var randomNumbers = generateRandomNumbers();
+var randomLineGenerator = function (line, svg, randomNumbers) {
     var g = svg.append('g')
         .classed('lineGroup', true);
 
     g.append('path')
         .classed('randomLines', true)
         .attr('transform', translate(MARGIN, MARGIN))
-        .attr('d', line(randomNumbers));
     return g;
 };
 
@@ -90,13 +88,22 @@ var lineScale = function () {
 };
 
 var loadLiveRandomNumbersData = function (svg) {
+    var randomNumbers = generateRandomNumbers();
     var line = lineScale();
-    var g = randomLineGenerator(line, svg);
+    var g = randomLineGenerator(line, svg, randomNumbers);
     var lineInterval = setInterval(function () {
-        svg.selectAll('.lineGroup').remove();
-        randomLineGenerator(line, svg);
+
+        randomNumbers.push(Math.abs(Math.random() * 100));
+
+        g.selectAll(".randomLines").datum(randomNumbers)
+            .attr('d', line)
+            .attr('transform', null)
+            .transition()
+            .attr('transform', 'translate(' + xScale(-1) + ')');
+
+        randomNumbers.shift();
     }, 500);
-    g.selectAll('path').exit().remove();
+    // g.selectAll('path').exit().remove();
 
     return lineInterval;
 };
@@ -137,18 +144,18 @@ var loadRandomBarChart = function (svg) {
 };
 
 window.onload = function () {
-    var barInterval,lineInterval;
     var svg = createChart();
+    var barInterval, lineInterval;
+
     d3.select('#bar').on('click', function () {
         clearInterval(lineInterval);
         barInterval = loadRandomBarChart(svg);
         svg.selectAll('.lineGroup').remove();
-        svg.selectAll('.barGroup').remove();
+        // svg.selectAll('.barGroup').remove();
     });
     d3.select('#line').on('click', function () {
         clearInterval(barInterval);
         lineInterval = loadLiveRandomNumbersData(svg);
-        svg.selectAll('.lineGroup').remove();
         svg.selectAll('.barGroup').remove();
     });
 };
