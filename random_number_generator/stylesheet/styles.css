@@ -1,0 +1,16 @@
+.randomLines {
+    stroke: black;
+    fill: none;
+    background: red;
+}
+
+.grid{
+    stroke: lightgrey;
+}
+
+.graph-choice{
+    background-color: grey;
+    width:100px;
+    text-align: center;
+    display: inline-block;
+}
