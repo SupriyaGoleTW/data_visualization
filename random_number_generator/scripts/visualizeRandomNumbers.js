@@ -91,10 +91,10 @@ var loadLiveRandomNumbersData = function (svg) {
     var randomNumbers = generateRandomNumbers();
     var line = lineScale();
     var g = randomLineGenerator(line, svg, randomNumbers);
+    g.attr('width',WIDTH-MARGIN);
+
     var lineInterval = setInterval(function () {
-
         randomNumbers.push(Math.abs(Math.random() * 100));
-
         g.selectAll(".randomLines").datum(randomNumbers)
             .attr('d', line)
             .attr('transform', null)
@@ -103,7 +103,6 @@ var loadLiveRandomNumbersData = function (svg) {
 
         randomNumbers.shift();
     }, 500);
-    // g.selectAll('path').exit().remove();
 
     return lineInterval;
 };
@@ -143,18 +142,26 @@ var loadRandomBarChart = function (svg) {
     return barInterval;
 };
 
+
 window.onload = function () {
     var svg = createChart();
     var barInterval, lineInterval;
 
     d3.select('#bar').on('click', function () {
+        if(svg.selectAll('.barGroup')){
+            svg.selectAll('.barGroup').remove();
+        }
         clearInterval(lineInterval);
+        clearInterval(barInterval);
         barInterval = loadRandomBarChart(svg);
         svg.selectAll('.lineGroup').remove();
-        // svg.selectAll('.barGroup').remove();
     });
     d3.select('#line').on('click', function () {
+        if(svg.selectAll('.lineGroup')){
+            svg.selectAll('.lineGroup').remove();
+        }
         clearInterval(barInterval);
+        clearInterval(lineInterval);
         lineInterval = loadLiveRandomNumbersData(svg);
         svg.selectAll('.barGroup').remove();
     });
