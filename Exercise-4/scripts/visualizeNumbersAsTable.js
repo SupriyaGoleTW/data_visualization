@@ -1,18 +1,23 @@
 var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-var addDataInRow = function (row, scale) {
-    row.selectAll('td')
-        .data(numbers, function (d) {return d;})
-        .enter()
-        .append('td')
-        .text(function (d) {
-            return scale(d);
-        });
-};
+var tableData = [
+    {title: 'Title', scale: d3.scaleOrdinal(numbers).domain(numbers), cell: 'th'},
+    {title: 'N', scale: d3.scaleOrdinal(numbers).domain(numbers), cell: 'td'},
+    {title: 'N-Square', scale: d3.scalePow().exponent(2), cell: 'td'},
+    {title: 'LOG', scale: function (d) {return d3.scaleLog()(d).toFixed(3);}, cell: 'td'},
+    {title: 'RANGE ROUND', scale: d3.scaleLog().rangeRound([0, 2]), cell: 'td'}
+];
 
-var appendRow = function (scale, title) {
-    var selection = d3.select('table tbody').append('tr');
-    selection.append('td').text(title);
-    addDataInRow(selection, scale);
+var addDataInRow = function (row, record) {
+    row.append(record.cell).text(record.title);
+    row.selectAll(record.cell)
+        .data(numbers, function (d) {
+            return d;
+        })
+        .enter()
+        .append(record.cell)
+        .text(function (d) {
+            return record.scale(d);
+        });
 };
 
 var visualize = function () {
@@ -21,11 +26,10 @@ var visualize = function () {
     var table = container.append('table');
     table.append('tbody');
 
-    appendRow(d3.scaleOrdinal(numbers).domain(numbers), 'Title');
-    appendRow(d3.scaleOrdinal(numbers).domain(numbers), 'N');
-    appendRow(d3.scalePow().exponent(2), 'Square');
-    appendRow(function(d){return d3.scaleLog()(d).toFixed(3)}, 'Log(n)');
-    appendRow(d3.scaleLog().rangeRound([0, 2]), 'Round Log(n)');
+    tableData.forEach(function (record) {
+        var selection = d3.select('table tbody').append('tr');
+        addDataInRow(selection, record);
+    });
 };
 
 window.onload = visualize;
