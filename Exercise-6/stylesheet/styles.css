@@ -1,0 +1,19 @@
+rect, circle, polygon,line{
+    fill:none;
+    stroke-width: 2px;
+}
+
+rect{
+    stroke: steelblue;
+}
+
+line{
+    stroke:gray;
+}
+circle{
+    stroke:red;
+}
+
+polygon{
+    stroke:green;
+}
