@@ -1,6 +1,12 @@
-path{
+.lineGroup > path {
     fill: none;
-    stroke: steelblue;
+    stroke: darkred;
+    stroke-width: 2px;
+}
+
+.lineGroupWithSin > path {
+    fill: none;
+    stroke: darkblue;
     stroke-width: 2px;
 }
 
