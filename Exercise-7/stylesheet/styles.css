@@ -15,3 +15,10 @@ circle{
     stroke:steelblue;
     stroke-width: 2px;
 }
+
+.lineChart , .lineChartWithCircles{
+    width:200px;
+    margin-left: 20px;
+    height: 30px;
+    border-radius: 5px;
+}
