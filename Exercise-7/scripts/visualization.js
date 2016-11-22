@@ -11,10 +11,6 @@ var addLineChart = function (group, scale) {
         .attr('d', scale);
 };
 
-var translate = function (x, y) {
-    return 'translate(' + x + ', ' + y + ')';
-};
-
 var addCirclesToEdgeOfLine = function (groupType, valueType) {
     var chart = d3.select('.' + groupType);
     chart.selectAll('circle')
@@ -33,13 +29,7 @@ var addCirclesToEdgeOfLine = function (groupType, valueType) {
         .attr('r', 3);
 };
 
-var addAxis = function (axis, x, y) {
-    d3.select('svg').append('g')
-        .attr('transform', translate(x, y))
-        .call(axis);
-};
-
-var generateLineScale = function (curveType,valueType, shiftBy) {
+var generateLineScale = function (curveType, valueType, shiftBy) {
     var scale = d3.line()
         .x(function (d) {
             return xScale(d.x / 10);
@@ -49,7 +39,8 @@ var generateLineScale = function (curveType,valueType, shiftBy) {
                 return yScale(Math.sin(d.x) / 10 + shiftBy);
             return yScale(d.y / 10);
         });
-    if(curveType)
+    
+    if (curveType)
         scale.curve(curveType);
     return scale;
 
@@ -57,36 +48,24 @@ var generateLineScale = function (curveType,valueType, shiftBy) {
 
 var xScale, yScale;
 
-var createSvg = function () {
+var createSvg = function (classType,title) {
     const WIDTH = 500;
     const HEIGHT = 500;
     const MARGIN = 50;
-    var xAxis,yAxis;
-
-    const INNERWIDTH = WIDTH - (2 * MARGIN);
-    const INNERHEIGHT = HEIGHT - (2 * MARGIN);
-
-    xScale = d3.scaleLinear().domain([0, 1]).range([0, INNERWIDTH]);
-    yScale = d3.scaleLinear().domain([0, 1]).range([INNERHEIGHT, 0]);
-
-    xAxis = d3.axisBottom(xScale);
-    yAxis = d3.axisLeft(yScale);
-
-    var svg = d3.select('.container')
-        .append('svg')
-        .attr('height', HEIGHT)
-        .attr('width', WIDTH);
-
-    addAxis(xAxis, MARGIN, HEIGHT - MARGIN);
-    addAxis(yAxis, MARGIN, MARGIN);
-    return svg;
+    var util = new Util(HEIGHT,WIDTH,MARGIN);
+    var scales = util.createScales(d3.scaleLinear(),d3.scaleLinear(),[0,1],[0,1]);
+    xScale = scales.xScale;
+    yScale = scales.yScale;
+    return util.createSvg(classType, title);
 };
 
-var createLineChart = function (svg, isCircleRequired, curveType) {
+var createLineChart = function (svg, isCircleRequired, curveType, title) {
     const MARGIN = 50;
     var shiftBy = 0.5;
     var lineScale = generateLineScale(curveType);
-    var lineWithSinScale = generateLineScale(curveType,Math.sin, shiftBy);
+    var lineWithSinScale = generateLineScale(curveType, Math.sin, shiftBy);
+    
+    svg.append('title').text(title);
 
     if (!isCircleRequired) {
         var lineGroup = svg.append('g').classed('lineGroup', true);
@@ -96,21 +75,21 @@ var createLineChart = function (svg, isCircleRequired, curveType) {
         addLineChart(lineGroupWithSin, lineWithSinScale);
     } else {
         addCirclesToEdgeOfLine('lineGroup');
-        addCirclesToEdgeOfLine('lineGroupWithSin',Math.sin)
+        addCirclesToEdgeOfLine('lineGroupWithSin', Math.sin)
     }
 
     d3.selectAll('.lineGroup')
-        .attr('transform', translate(MARGIN, MARGIN));
+        .attr('transform', Util.prototype.translate(MARGIN, MARGIN));
     d3.selectAll('.lineGroupWithSin')
-        .attr('transform', translate(MARGIN, MARGIN));
+        .attr('transform', Util.prototype.translate(MARGIN, MARGIN));
 };
 
-var addLineChartToGraph = function (isCircleRequired,curveType) {
+var addLineChartToGraph = function (isCircleRequired, curveType, title) {
     if (!isCircleRequired) {
         d3.select('svg').select('.lineGroup').remove();
         d3.select('svg').select('.lineGroupWithSin').remove();
     }
-    createLineChart(svg, isCircleRequired, curveType);
+    createLineChart(svg, isCircleRequired, curveType, title);
 };
 
 var svg;
@@ -128,12 +107,12 @@ var showDropdown = function () {
 
     var options = d3.select('.curves')
         .append('select')
-        .on('change',function () {
+        .on('change', function () {
             var select = d3.select('select');
             var selectedIndex = select.property('selectedIndex');
-            var curveType = interpolationTechniques[selectedIndex].curve;
-            addLineChartToGraph(false,curveType);
-            addLineChartToGraph(true,curveType);
+            var curveType = interpolationTechniques[selectedIndex];
+            addLineChartToGraph(false, curveType.curve, curveType.title);
+            addLineChartToGraph(true, curveType.curve, curveType.title);
         });
 
     options.selectAll('option')
@@ -146,12 +125,10 @@ var showDropdown = function () {
         .attr("value", function (d) {
             return d.title;
         });
-
-
 };
 
 var visualize = function () {
-    svg = createSvg();
+    svg = createSvg(d3.select('.container'),'lines');
     showDropdown();
 };
 
