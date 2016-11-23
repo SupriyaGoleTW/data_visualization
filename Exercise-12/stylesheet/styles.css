@@ -1,0 +1,13 @@
+.area{
+    fill: lightsteelblue;
+}
+
+.line{
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+circle{
+    fill: white;
+}

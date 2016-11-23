@@ -1,6 +1,7 @@
 var dataPoints = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 var xScale, yScale;
-var addCircles = function (xScale, yScale) {
+
+var addCircles = function () {
     var chart = d3.selectAll('.lines');
     chart.selectAll('circle')
         .data(dataPoints)
@@ -26,14 +27,14 @@ var createLineScale = function (xScale, yScale, curve) {
         .curve(curve);
 };
 
-var addCurveToGraph = function (lineScale, xScale, yScale, MARGIN, svg) {
+var addCurveToGraph = function (lineScale, MARGIN, svg) {
     svg.append('g')
         .classed('lines', true)
         .append('path')
         .datum(dataPoints)
         .attr('d', lineScale);
 
-    addCircles(xScale, yScale);
+    addCircles();
     d3.selectAll('.lines').attr('transform', 'translate(' + MARGIN + ',' + MARGIN + ')');
 };
 
@@ -47,7 +48,7 @@ var processAllCurves = function () {
     ];
 
     curveWithTensionValue.forEach(function (curveType) {
-        loadChart(curveType)
+       loadChart(curveType)
     });
 };
 
@@ -55,13 +56,16 @@ var loadChart = function (curve) {
     const WIDTH = 500;
     const HEIGHT = 500;
     const MARGIN = 50;
-    var util = new Util(HEIGHT, WIDTH, MARGIN);
-    var svg = util.createSvg(d3.select('.container'), curve.title);
-    var scales = util.createScales(d3.scaleLinear(), d3.scaleLinear(), [0, 1], [0, 1]);
+    var util = new Util(HEIGHT,WIDTH,MARGIN);
+
+    var svg = util.createSvg(d3.select('.container'),curve.title);
+    var scales = util.createScales(d3.scaleLinear(),d3.scaleLinear(),[0,1],[0,1]);
     xScale = scales.xScale;
     yScale = scales.yScale;
-    var lineScale = createLineScale(xScale, yScale, curve.curve);
-    addCurveToGraph(lineScale, xScale, yScale, MARGIN, svg);
+
+    var lineScale = createLineScale(xScale, yScale,curve.curve);
+
+    addCurveToGraph(lineScale, MARGIN, svg);
 };
 
 window.onload = processAllCurves;
