@@ -1,13 +1,19 @@
-.area{
-    fill: lightsteelblue;
-}
-
-.line{
+path{
     fill: none;
-    stroke: steelblue;
-    stroke-width: 2px;
 }
 
 circle{
     fill: white;
+    stroke-width: 2px;
+    stroke: steelblue;
+}
+
+.areaChart{
+    fill:lightsteelblue;
+    opacity: 0.5;
+}
+
+.lineChart{
+    stroke: steelblue;
+    stroke-width: 2px;
 }

@@ -39,21 +39,21 @@ var generateLineScale = function (curveType, valueType, shiftBy) {
                 return yScale(Math.sin(d.x) / 10 + shiftBy);
             return yScale(d.y / 10);
         });
-    
+
     if (curveType)
         scale.curve(curveType);
     return scale;
 
 };
 
-var xScale, yScale;
+var xScale, yScale, util;
 
-var createSvg = function (classType,title) {
+var createSvg = function (classType, title) {
     const WIDTH = 500;
     const HEIGHT = 500;
     const MARGIN = 50;
-    var util = new Util(HEIGHT,WIDTH,MARGIN);
-    var scales = util.createScales(d3.scaleLinear(),d3.scaleLinear(),[0,1],[0,1]);
+    util = new Util(HEIGHT, WIDTH, MARGIN);
+    var scales = util.createScales(d3.scaleLinear(), d3.scaleLinear(), [0, 1], [0, 1]);
     xScale = scales.xScale;
     yScale = scales.yScale;
     return util.createSvg(classType, title);
@@ -64,7 +64,7 @@ var createLineChart = function (svg, isCircleRequired, curveType, title) {
     var shiftBy = 0.5;
     var lineScale = generateLineScale(curveType);
     var lineWithSinScale = generateLineScale(curveType, Math.sin, shiftBy);
-    
+
     svg.append('title').text(title);
 
     if (!isCircleRequired) {
@@ -105,30 +105,20 @@ var showDropdown = function () {
         {curve: d3.curveCatmullRom, title: 'curveCatmullRom2'}
     ];
 
-    var options = d3.select('.curves')
-        .append('select')
-        .on('change', function () {
-            var select = d3.select('select');
-            var selectedIndex = select.property('selectedIndex');
-            var curveType = interpolationTechniques[selectedIndex];
-            addLineChartToGraph(false, curveType.curve, curveType.title);
-            addLineChartToGraph(true, curveType.curve, curveType.title);
-        });
+    var options = util.generateDropdownList(interpolationTechniques, 'curves');
 
-    options.selectAll('option')
-        .data(interpolationTechniques)
-        .enter()
-        .append('option')
-        .text(function (d) {
-            return d.title;
-        })
-        .attr("value", function (d) {
-            return d.title;
-        });
+    options.on('change', function () {
+        var select = d3.select('select');
+        var selectedIndex = select.property('selectedIndex');
+        var curveType = interpolationTechniques[selectedIndex];
+        addLineChartToGraph(false, curveType.curve, curveType.title);
+        addLineChartToGraph(true, curveType.curve, curveType.title);
+    });
+
 };
 
 var visualize = function () {
-    svg = createSvg(d3.select('.container'),'lines');
+    svg = createSvg(d3.select('.container'), 'lines');
     showDropdown();
 };
 

@@ -15,6 +15,7 @@ Util.prototype = {
         this.addAxis(title);
         return svg;
     },
+
     addAxis: function (title) {
         var scales = this.createScales(d3.scaleLinear(), d3.scaleLinear(), [0, 1], [0, 1]);
         var xAxis, yAxis;
@@ -24,11 +25,13 @@ Util.prototype = {
         this.addAxisToSvg(yAxis, this.margin, this.margin, title);
 
     },
+
     addAxisToSvg: function (axis, x, y, title) {
         d3.select('.' + title).append('g')
             .attr('transform', this.translate(x, y))
             .call(axis);
     },
+
     translate: function (x, y) {
         return 'translate(' + x + ', ' + y + ')';
     },
@@ -40,16 +43,20 @@ Util.prototype = {
         var yScale = yScaleType.domain(yDomain).range([INNERHEIGHT, 0]);
         return {xScale: xScale, yScale: yScale};
     },
-    addCurveToGraph: function (scale, xScale, yScale, x,y, svg,dataPoints, type) {
-        svg.append('g')
+
+    addCurveToGraph: function (scale, xScale, yScale, x, y, svg, dataPoints, type) {
+        var chart = svg.append('g')
             .classed(type, true)
             .append('path')
             .datum(dataPoints)
             .attr('d', scale);
-        d3.selectAll('.'+type).attr('transform', 'translate(' + x + ',' + y + ')');
+        d3.selectAll('.' + type).attr('transform', 'translate(' + x + ',' + y + ')');
+        return chart;
     },
-    addCircles : function (dataPoints,type,multiplier,adder) {
-        var chart = d3.selectAll(type);
+
+    addCircles: function (dataPoints, type, multiplier, adder) {
+        var chart = d3.selectAll('.' + type);
+
         chart.selectAll('circle')
             .data(dataPoints)
             .enter()
@@ -61,5 +68,22 @@ Util.prototype = {
                 return yScale((multiplier * Math.sin(d) + adder) / 10);
             })
             .attr('r', 5);
+    },
+
+    generateDropdownList: function (data, type) {
+        var options = d3.select('.' + type)
+            .append('select');
+
+        options.selectAll('option')
+            .data(data)
+            .enter()
+            .append('option')
+            .text(function (d) {
+                return d.title;
+            })
+            .attr("value", function (d) {
+                return d.title;
+            });
+        return options;
     }
 };
