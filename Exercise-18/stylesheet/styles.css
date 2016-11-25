@@ -1,0 +1,43 @@
+.shape{
+    background-color:lightsteelblue;
+    text-align: center;
+    margin-top:2px;
+    height:20px;
+    width:100px;
+}
+
+button{
+    width:100px;
+    height:30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+svg{
+    border: 1px solid black;
+}
+
+.main {
+    margin-top: 20px;
+    display: -webkit-box;
+}
+
+.output {
+    margin-left: 30px;
+}
+
+circle{
+    fill:steelblue;
+}
+
+text{
+    font-family: sans-serif;
+    text-anchor: middle;
+    alignment-baseline: middle;
+}
+
+.quantile-list{
+    width:100px;
+    height: 30px;
+}
+

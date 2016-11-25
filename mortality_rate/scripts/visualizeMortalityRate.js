@@ -30,7 +30,7 @@ var getExtentMortalityRatePerYear = function (dataPerYear) { //todo refactor the
     var minVal = Math.min.apply(null, yearWiseData);
     var maxVal = Math.max.apply(null, yearWiseData);
 
-    return [minVal, maxVal];
+    return [_minVal, maxVal];
 };
 
 const OUTER_WIDTH = 1000;
