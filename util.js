@@ -5,19 +5,19 @@ var Util = function (height, width, margin) {
 };
 
 Util.prototype = {
-    createSvg: function (classType, title) {
+    createSvg: function (classType, title, xDomain, yDomain) {
         var svg = classType
             .append('svg')
             .attr('height', this.height)
             .attr('width', this.width)
             .classed(title, true);
 
-        this.addAxis(title);
+        this.addAxis(title,xDomain,yDomain);
         return svg;
     },
 
-    addAxis: function (title) {
-        var scales = this.createScales(d3.scaleLinear(), d3.scaleLinear(), [0, 1], [0, 1]);
+    addAxis: function (title,xDomain,yDomain) {
+        var scales = this.createScales(d3.scaleLinear(), d3.scaleLinear(), xDomain, yDomain);
         var xAxis, yAxis;
         xAxis = d3.axisBottom(scales.xScale);
         yAxis = d3.axisLeft(scales.yScale);

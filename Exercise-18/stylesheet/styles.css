@@ -5,6 +5,13 @@
     height:20px;
     width:100px;
 }
+.outputSum{
+    background-color:lightsteelblue;
+    text-align: center;
+    margin-top:2px;
+    height:20px;
+    width:100px;
+}
 
 button{
     width:100px;
